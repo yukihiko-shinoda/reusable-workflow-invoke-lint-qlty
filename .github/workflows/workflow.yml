@@ -7,6 +7,14 @@ on:
       add-prefix:
         type: string
         default: ''
+      setup-command:
+        description: Shell command run after checkout and before uv, e.g. to install system tools like ffmpeg. Runs in bash. Empty means skipped.
+        type: string
+        default: ''
+      post-sync-command:
+        description: Shell command run after `uv sync` and before the coverage step, with the project venv and its console scripts available, e.g. `uv run <project-cli> install`. Runs in bash. Empty means skipped.
+        type: string
+        default: ''
 jobs:
   analyze:
     runs-on: ubuntu-latest
@@ -18,10 +26,14 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v7
+      - if: inputs.setup-command != ''
+        run: ${{ inputs.setup-command }}
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ inputs.python-version }}
       - run: uv sync
+      - if: inputs.post-sync-command != ''
+        run: ${{ inputs.post-sync-command }}
       - run: uv run invoke test.coverage --xml
       - uses: qltysh/qlty-action/coverage@v2
         with:

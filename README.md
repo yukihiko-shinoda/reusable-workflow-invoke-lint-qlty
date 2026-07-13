@@ -79,6 +79,44 @@ jobs:
       id-token: write
 ```
 
+<!-- markdownlint-disable-next-line no-trailing-punctuation -->
+### How do I install system tools before the tests run?
+
+Pass the `setup-command` input. It runs in bash after checkout and before uv is set up. Leave it empty (the default) to skip the step:
+
+```yaml
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  analyze:
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-qlty/.github/workflows/workflow.yml@v1
+    with:
+      setup-command: 'sudo apt-get update && sudo apt-get install -y ffmpeg'
+    permissions:
+      contents: read
+      id-token: write
+```
+
+<!-- markdownlint-disable-next-line no-trailing-punctuation -->
+### How do I run a command after dependencies are installed?
+
+Pass the `post-sync-command` input. It runs in bash after `uv sync` and before the coverage step, so the project venv and its console scripts are available. Leave it empty (the default) to skip the step:
+
+```yaml
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  analyze:
+    uses: yukihiko-shinoda/reusable-workflow-invoke-lint-qlty/.github/workflows/workflow.yml@v1
+    with:
+      post-sync-command: 'uv run my-cli install'
+    permissions:
+      contents: read
+      id-token: write
+```
+
 ## API
 
 ### Inputs
