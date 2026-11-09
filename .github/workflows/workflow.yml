@@ -3,7 +3,7 @@ on:
     inputs:
       python-version:
         type: string
-        default: '3.14'
+        default: '3.15'
       add-prefix:
         type: string
         default: ''
@@ -25,17 +25,17 @@ jobs:
       #   https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-cloud-providers#adding-permissions-settings
       id-token: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - if: inputs.setup-command != ''
         run: ${{ inputs.setup-command }}
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2  # v10.3.3
         with:
           python-version: ${{ inputs.python-version }}
       - run: uv sync
       - if: inputs.post-sync-command != ''
         run: ${{ inputs.post-sync-command }}
       - run: uv run invoke test.coverage --xml
-      - uses: qltysh/qlty-action/coverage@v2
+      - uses: qltysh/qlty-action/coverage@ebcd284bf32e36a030afe15f1e136c7be08b9506  # v2.5.0
         with:
           oidc: true
           files: coverage.xml
